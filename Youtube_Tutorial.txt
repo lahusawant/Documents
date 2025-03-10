@@ -22,6 +22,10 @@ df_json_1 = spark\
                         .load("/FileStore/tables/drivers-1.json")
 df_json_1.display()
 ------------------------------------------------------------------------------------------------------
+df_schema_1.select(col("Item_Identifier")\
+            .alias("Item_ID"))\
+            .display()
+------------------------------------------------------------------------------------------------------
 df_json_1 = spark\
     .read\
         .format("json")\
