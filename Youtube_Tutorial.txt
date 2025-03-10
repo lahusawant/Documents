@@ -102,3 +102,5 @@ df_schema_1.select(col("Item_Identifier")\
             .alias("Item_ID"))\
             .display()
 ------------------------------------------------------------------------------------------------------
+df_schema_1.withColumnRenamed("Item_Weight","Item_WT")\
+            .display()
