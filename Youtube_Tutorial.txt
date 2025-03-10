@@ -104,3 +104,11 @@ df_schema_1.select(col("Item_Identifier")\
 ------------------------------------------------------------------------------------------------------
 df_schema_1.withColumnRenamed("Item_Weight","Item_WT")\
             .display()
+------------------------------------------------------------------------------------------------------
+df_schema_1.withColumn("flag",lit("new")).display()
+
+df_schema_1.withColumn("Multiple",col("Item_weight")*col("Item_MRP")).display()
+
+df_schema_1.withColumn("Item_Fat_Content",regexp_replace(col("Item_Fat_Content"),"Regular","Reg"))\
+            .withColumn("Item_Fat_Content",regexp_replace(col("Item_Fat_Content"),"Low Fat","LF"))\
+            .display()
