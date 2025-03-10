@@ -86,3 +86,19 @@ df_schema_1.select(col("Item_Identifier")\
             .alias("Item_ID"))\
             .display()
 ------------------------------------------------------------------------------------------------------
+df_schema_1.filter(col("Item_Fat_Content")=="Regular")\
+            .display()
+
+df_schema_1.filter(\
+                    (col("Item_Type") == "Soft Drinks")\
+                    & (col("Item_Weight") < 10))\
+            .display()
+
+df_schema_1.filter(\
+                (col("Outlet_Location_Type").isin("Tier 1","Tier 2"))\
+                 & (col("Outlet_Size").isNull()))\
+            .display()
+df_schema_1.select(col("Item_Identifier")\
+            .alias("Item_ID"))\
+            .display()
+------------------------------------------------------------------------------------------------------
