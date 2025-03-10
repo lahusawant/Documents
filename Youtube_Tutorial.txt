@@ -34,3 +34,12 @@ df_json_2 = spark\
     .read\
         .json("/FileStore/tables/drivers-1.json")
 df_json_2.display()
+------------------------------------------------------------------------------------------------------
+df_schema_1 = spark\
+                    .read\
+                        .format("csv")\
+                            .schema(ddl_schema)\
+                                .option("header",True)\
+                                    .load("/FileStore/tables/BigMart_Sales.csv")
+df_schema_1.display()
+df_schema_1.printSchema()
