@@ -67,3 +67,14 @@ df_schema_2 = spark\
                                 .load("/FileStore/tables/BigMart_Sales.csv")
 df_schema_2.display()
 df_schema_2.printSchema()
+------------------------------------------------------------------------------------------------------
+df_schema_1.select("Item_Identifier",\
+                    "Item_Weight",\
+                    "Item_Fat_Content")\
+            .display()
+------------------------------------------------------------------------------------------------------
+df_schema_1.select(col("Item_Identifier"),\
+                    col("Item_Weight"),\
+                    col("Item_Fat_Content"))\
+            .display()
+------------------------------------------------------------------------------------------------------
