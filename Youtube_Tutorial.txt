@@ -1,5 +1,9 @@
+# To list details :- 
+
 dbutils.fs.ls('/FileStore/tables')
 ------------------------------------------------------------------------------------------------------
+# To read CSV file and display :-
+
 df_csv_1 = spark\
     .read\
         .format('csv')\
@@ -8,11 +12,15 @@ df_csv_1 = spark\
                     .load('/FileStore/tables/BigMart_Sales.csv')
 df_1.display()
 ------------------------------------------------------------------------------------------------------
+# To read CSV file and display :-
+
 df_csv_2 = spark\
     .read\
         .csv('/FileStore/tables/BigMart_Sales.csv',inferSchema=True,header=True)
 df_2.display()
 ------------------------------------------------------------------------------------------------------
+# To read JSON file and display :-
+
 df_json_1 = spark\
     .read\
         .format("json")\
@@ -22,6 +30,8 @@ df_json_1 = spark\
                         .load("/FileStore/tables/drivers-1.json")
 df_json_1.display()
 ------------------------------------------------------------------------------------------------------
+# To read JSON file and display :-
+
 df_schema_1.select(col("Item_Identifier")\
             .alias("Item_ID"))\
             .display()
