@@ -576,7 +576,8 @@ df_csv_1.dropna('any')\
 
 # COMMAND ----------
 
-df_csv_1.dropna(subset=['Outlet_Size'])\
+df_csv_1.select('Outlet_Size')\
+        .dropna(subset=['Outlet_Size'])\
         .limit(10)\
         .display()
 
@@ -593,7 +594,8 @@ df_csv_1.fillna('NotAvailable')\
 
 # COMMAND ----------
 
-df_csv_1.fillna('NotAvailable',subset=['Outlet_Size'])\
+df_csv_1.select('Outlet_Size')\
+        .fillna('NotAvailable',subset=['Outlet_Size'])\
         .limit(10)\
         .display()
 
@@ -604,7 +606,10 @@ df_csv_1.fillna('NotAvailable',subset=['Outlet_Size'])\
 
 # COMMAND ----------
 
-df_csv_1.withColumn('Outlet_Type',split('Outlet_Type',' ')[1]).display()
+df_csv_1.select('Outlet_Type')\
+        .withColumn('Outlet_Type',split('Outlet_Type',' ')[1])\
+        .limit(10)\
+        .display()
 
 # COMMAND ----------
 
@@ -616,9 +621,127 @@ df_csv_1.withColumn('Outlet_Type',split('Outlet_Type',' ')[1]).display()
 
 split_df = df_csv_1.withColumn('Outlet_Type',split('Outlet_Type',' '))
 
+split_df.select('Outlet_Type').limit(20).display()
+
 # COMMAND ----------
 
 explode_df = split_df.withColumn('Outlet_Type',explode('Outlet_Type'))
+
+explode_df.select('Outlet_Type').limit(40).display()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### array_contains()
+
+# COMMAND ----------
+
+array_contains_df = split_df.withColumn('Type1_flag',array_contains('Outlet_Type','Type1'))
+
+array_contains_df.select('Type1_flag').limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## groupBy()
+
+# COMMAND ----------
+
+df_csv_1.groupBy('Item_Type')\
+        .agg(sum('Item_MRP'))\
+    .display()
+
+# COMMAND ----------
+
+df_csv_1.groupBy('Item_Type')\
+        .agg(avg('Item_MRP'))\
+    .display()
+
+# COMMAND ----------
+
+df_csv_1.groupBy('Item_Type','Outlet_Size')\
+        .agg(sum('Item_MRP'))\
+        .alias('Total_MRP')\
+        .display()
+
+# COMMAND ----------
+
+df_csv_1.groupBy('Item_Type','Outlet_Size')\
+        .agg(\
+            sum('Item_MRP').alias('Total_MRP'),\
+            avg('Item_MRP').alias('Avg_MRP')\
+        )\
+        .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## collect_list()
+
+# COMMAND ----------
+
+data = [('user1','book1'),
+        ('user1','book2'),
+        ('user2','book2'),
+        ('user2','book4'),
+        ('user3','book1')]
+
+schema = 'user string, book string'
+
+df_book = spark.createDataFrame(data,schema)
+
+df_book.display()
+
+df_book.groupBy('user')\
+        .agg(collect_list('book'))\
+        .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## pivot
+
+# COMMAND ----------
+
+df_csv_1.groupBy('Item_Type').pivot('Outlet_Size').agg(avg('Item_MRP')).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## when-otherwise
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Example 1 - if meat then non-veg otherwise veg 
+
+# COMMAND ----------
+
+veg_flg_df = df_csv_1.withColumn('veg_flag',when(col('Item_Type')=='Meat','Non-Veg').otherwise('Veg'))
+
+veg_flg_df.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Example 2 - ItemType - veg and MRP < 100 then inexpensive otherwise expensive
+
+# COMMAND ----------
+
+veg_flg_df.withColumn('veg_exp_flg',\
+                when((col('veg_flag')=='Veg') & (col('Item_MRP')<100),'Veg_Inexpensive')\
+                .when((col('veg_flag')=='Veg') & (col('Item_MRP')>100),'Veg_Exxpensive')\
+            .otherwise('Non-Veg')\
+                )\
+            .display()
 
 # COMMAND ----------
 
