@@ -599,4 +599,27 @@ df_csv_1.fillna('NotAvailable',subset=['Outlet_Size'])\
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## SPLIT and Indexing
+
+# COMMAND ----------
+
+df_csv_1.withColumn('Outlet_Type',split('Outlet_Type',' ')[1]).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Explode
+
+# COMMAND ----------
+
+
+split_df = df_csv_1.withColumn('Outlet_Type',split('Outlet_Type',' '))
+
+# COMMAND ----------
+
+explode_df = split_df.withColumn('Outlet_Type',explode('Outlet_Type'))
+
+# COMMAND ----------
+
 
