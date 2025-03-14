@@ -4,10 +4,6 @@
 
 # COMMAND ----------
 
-dbutils.fs.ls('/FileStore/tables')
-
-# COMMAND ----------
-
 df_csv_1 = spark\
             .read\
             .format('csv')\
@@ -17,7 +13,7 @@ df_csv_1 = spark\
 
 # COMMAND ----------
 
-df_csv_1.display()
+df_csv_1.limit(10).display()
 
 # COMMAND ----------
 
@@ -27,7 +23,7 @@ df_csv_2 =  spark\
 
 # COMMAND ----------
 
-df_csv_2.display()
+df_csv_2.limit(10).display()
 
 # COMMAND ----------
 
@@ -41,7 +37,7 @@ df_json_1 = spark\
 
 # COMMAND ----------
 
-df_json_1.display()
+df_json_1.limit(10).display()
 
 # COMMAND ----------
 
@@ -51,7 +47,7 @@ df_json_2 = spark\
 
 # COMMAND ----------
 
-df_json_2.display()
+df_json_2.limit(10).display()
 
 # COMMAND ----------
 
@@ -91,7 +87,7 @@ df_schema_1 = spark\
 
 # COMMAND ----------
 
-df_schema_1.display()
+df_schema_1.limit(10).display()
 
 # COMMAND ----------
 
@@ -134,7 +130,7 @@ df_schema_2 = spark\
 
 # COMMAND ----------
 
-df_schema_2.display()
+df_schema_2.limit(10).display()
 
 # COMMAND ----------
 
@@ -155,14 +151,16 @@ df_schema_2.printSchema()
 df_schema_1.select("Item_Identifier",\
                     "Item_Weight",\
                     "Item_Fat_Content")\
-            .display()
+                .limit(10)\
+                .display()
 
 # COMMAND ----------
 
 df_schema_1.select(col("Item_Identifier"),\
                     col("Item_Weight"),\
                     col("Item_Fat_Content"))\
-            .display()
+                .limit(10)\
+                .display()
 
 # COMMAND ----------
 
@@ -173,6 +171,7 @@ df_schema_1.select(col("Item_Identifier"),\
 
 df_schema_1.select(col("Item_Identifier")\
             .alias("Item_ID"))\
+                .limit(10)\
             .display()
 
 # COMMAND ----------
@@ -187,7 +186,7 @@ df_schema_1.select(col("Item_Identifier")\
 
 # COMMAND ----------
 
-df_schema_1.filter(col("Item_Fat_Content")=="Regular").display()
+df_schema_1.filter(col("Item_Fat_Content")=="Regular").limit(10).display()
 
 # COMMAND ----------
 
@@ -198,7 +197,7 @@ df_schema_1.filter(col("Item_Fat_Content")=="Regular").display()
 
 df_schema_1.filter(\
                     (col("Item_Type") == "Soft Drinks") & (col("Item_Weight") < 10)\
-                    ).display()
+                    ).limit(10).display()
 
 # COMMAND ----------
 
@@ -210,6 +209,7 @@ df_schema_1.filter(\
 df_schema_1.filter(\
                 (col("Outlet_Location_Type").isin("Tier 1","Tier 2"))\
                     & (col("Outlet_Size").isNull()))\
+            .limit(10)\
             .display()
 
 # COMMAND ----------
@@ -219,7 +219,7 @@ df_schema_1.filter(\
 
 # COMMAND ----------
 
-df_schema_1.withColumnRenamed("Item_Weight","Item_WT").display()
+df_schema_1.withColumnRenamed("Item_Weight","Item_WT").limit(10).display()
 
 # COMMAND ----------
 
@@ -233,11 +233,11 @@ df_schema_1.withColumnRenamed("Item_Weight","Item_WT").display()
 
 # COMMAND ----------
 
-df_schema_1.withColumn("flag",lit("new")).display()
+df_schema_1.withColumn("flag",lit("new")).limit(10).display()
 
 # COMMAND ----------
 
-df_schema_1.withColumn("Multiple",col("Item_weight")*col("Item_MRP")).display()
+df_schema_1.withColumn("Multiple",col("Item_weight")*col("Item_MRP")).limit(10).display()
 
 # COMMAND ----------
 
@@ -248,6 +248,7 @@ df_schema_1.withColumn("Multiple",col("Item_weight")*col("Item_MRP")).display()
 
 df_schema_1.withColumn("Item_Fat_Content",regexp_replace(col("Item_Fat_Content"),"Regular","Reg"))\
             .withColumn("Item_Fat_Content",regexp_replace(col("Item_Fat_Content"),"Low Fat","LF"))\
+            .limit(10)\
             .display()
 
 # COMMAND ----------
@@ -272,7 +273,10 @@ df_type_cast.printSchema()
 
 # COMMAND ----------
 
-df_csv_1.sort(col("Item_Weight").desc()).display()
+df_csv_1.sort(col("Item_Weight")\
+        .desc())\
+        .limit(10)\
+        .display()
 
 # COMMAND ----------
 
@@ -281,7 +285,10 @@ df_csv_1.sort(col("Item_Weight").desc()).display()
 
 # COMMAND ----------
 
-df_csv_1.sort(col("Item_Visibility").asc()).display()
+df_csv_1.sort(col("Item_Visibility")
+        .asc())\
+        .limit(10)\
+        .display()
 
 # COMMAND ----------
 
@@ -290,7 +297,9 @@ df_csv_1.sort(col("Item_Visibility").asc()).display()
 
 # COMMAND ----------
 
-df_csv_1.sort(["Item_Weight","Item_Visibility"],ascending = [0,0]).display()
+df_csv_1.sort(["Item_Weight","Item_Visibility"],ascending = [0,0])\
+        .limit(10)\
+        .display()
 
 # COMMAND ----------
 
@@ -299,7 +308,9 @@ df_csv_1.sort(["Item_Weight","Item_Visibility"],ascending = [0,0]).display()
 
 # COMMAND ----------
 
-df_csv_1.sort(['Item_weight','Item_Visibility'], ascending = [0,1]).display()
+df_csv_1.sort(['Item_weight','Item_Visibility'], ascending = [0,1])\
+    .limit(10)\
+        .display()
 
 # COMMAND ----------
 
@@ -308,7 +319,9 @@ df_csv_1.sort(['Item_weight','Item_Visibility'], ascending = [0,1]).display()
 
 # COMMAND ----------
 
-df_csv_1.sort(['Item_MRP'], ascending = [1]).display()
+df_csv_1.sort(['Item_MRP'], ascending = [1])\
+    .limit(10)\
+    .display()
 
 # COMMAND ----------
 
@@ -354,7 +367,7 @@ df_csv_1.drop("Item_Visibiliy","Item_Type").limit(5).display()
 
 # COMMAND ----------
 
-df_csv_1.dropDuplicates().display() # DeDups
+df_csv_1.dropDuplicates().limit(10).display() # DeDups
 
 # COMMAND ----------
 
@@ -363,11 +376,226 @@ df_csv_1.dropDuplicates().display() # DeDups
 
 # COMMAND ----------
 
-df_csv_1.dropDuplicates(subset=["Item_Type"]).display()
+df_csv_1.dropDuplicates(subset=["Item_Type"]).limit(10).display()
 
 # COMMAND ----------
 
-df_csv_1.distinct().display()
+df_csv_1.distinct().limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## UNION & UNION BY NAME
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Preparing DataFrames
+
+# COMMAND ----------
+
+data1 = [('1','kad'),('2','sid')]
+schema1 = 'id STRING, name STRING' 
+
+df1 = spark.createDataFrame(data1,schema1)
+
+data2 = [('3','rahul'),('4','jas')]
+schema2 = 'id STRING, name STRING' 
+
+df2 = spark.createDataFrame(data2,schema2)
+
+data3 = [('kad','1'),('sid','2')]
+schema3 = 'name STRING, id STRING' 
+
+df3 = spark.createDataFrame(data3,schema3)
+
+
+# COMMAND ----------
+
+df1.display()
+
+# COMMAND ----------
+
+df2.display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Union
+
+# COMMAND ----------
+
+df1.union(df2).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### UNION BY NAME
+
+# COMMAND ----------
+
+df3.union(df2).display()
+
+# COMMAND ----------
+
+df3.unionByName(df2).display()
+
+# COMMAND ----------
+
+# MAGIC %md 
+# MAGIC ## String Functions
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### initcap(), upper(), lower()
+
+# COMMAND ----------
+
+df_csv_1\
+    .select(\
+        (initcap('Item_Type').alias("initcap")),\
+        (upper('Item_Type').alias('upper')),\
+        (lower('Item_Type').alias('lower'))\
+    )\
+    .limit(10)\
+    .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Date Function
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### current_date()
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('curr_date',current_date())
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### date_add()
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('week_after',date_add('curr_date',7))
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### date_sub()
+# MAGIC #### method - 1 
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('week_before_method1',date_sub('curr_date',7))
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### date_sub()
+# MAGIC #### method - 2
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('week_before_method2',date_add('curr_date',-7))
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### datediff()
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('datediff',datediff('week_after','curr_date'))
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### date_format()
+
+# COMMAND ----------
+
+df_csv_1 = df_csv_1.withColumn('dateformat',date_format('week_before_method2','dd-MM-yyyy'))
+
+# COMMAND ----------
+
+df_csv_1.limit(10).display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## How to handle null?
+# MAGIC #### Option 1 - Dropping null
+# MAGIC #### Option 2 - Filling null
+
+# COMMAND ----------
+
+df_csv_1.select('Outlet_Size').distinct().display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Dropping nulls
+
+# COMMAND ----------
+
+df_csv_1.dropna('all')\
+        .limit(10)\
+        .display()
+
+# COMMAND ----------
+
+df_csv_1.dropna('any')\
+        .limit(10)\
+        .display()
+
+# COMMAND ----------
+
+df_csv_1.dropna(subset=['Outlet_Size'])\
+        .limit(10)\
+        .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### filling nulls
+
+# COMMAND ----------
+
+df_csv_1.fillna('NotAvailable')\
+        .limit(10)\
+        .display()
+
+# COMMAND ----------
+
+df_csv_1.fillna('NotAvailable',subset=['Outlet_Size'])\
+        .limit(10)\
+        .display()
 
 # COMMAND ----------
 
