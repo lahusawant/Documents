@@ -399,15 +399,21 @@ schema1 = 'id STRING, name STRING'
 
 df1 = spark.createDataFrame(data1,schema1)
 
+df1.display()
+
 data2 = [('3','rahul'),('4','jas')]
 schema2 = 'id STRING, name STRING' 
 
 df2 = spark.createDataFrame(data2,schema2)
 
+df2.display()
+
 data3 = [('kad','1'),('sid','2')]
 schema3 = 'name STRING, id STRING' 
 
 df3 = spark.createDataFrame(data3,schema3)
+
+df3.display()
 
 
 # COMMAND ----------
@@ -741,7 +747,111 @@ veg_flg_df.withColumn('veg_exp_flg',\
                 .when((col('veg_flag')=='Veg') & (col('Item_MRP')>100),'Veg_Exxpensive')\
             .otherwise('Non-Veg')\
                 )\
+            .limit(50)\
             .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## joins 
+
+# COMMAND ----------
+
+dataj1 = [('1','gaur','d01'), ('2','kit','d02'), ('3','sam','d03'), ('4','tim','d03'), ('5','aman','d05'), ('6','nad','d06')]
+
+schemaj1 = 'emp_id STRING, emp_name STRING, dept_id STRING'
+
+df1 = spark.createDataFrame(dataj1,schemaj1)
+
+df1.display()
+
+dataj2 = [('d01','HR'), ('d02','Marketing'), ('d03','Accounts'), ('d04','IT'), ('d05','Finance')]
+
+schemaj2 = 'dept_id STRING, department STRING'
+
+df2 = spark.createDataFrame(dataj2,schemaj2)
+
+df2.display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### inner
+
+# COMMAND ----------
+
+df1.join(df2,df1['dept_id']==df2['dept_id'],'inner').display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### left
+
+# COMMAND ----------
+
+df1.join(df2,df1['dept_id']==df2['dept_id'],'left').display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### right
+
+# COMMAND ----------
+
+df1.join(df2,df1['dept_id']==df2['dept_id'],'right').display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### anti
+
+# COMMAND ----------
+
+df1.join(df2,\
+    df1['dept_id']==df2['dept_id'],\
+        'anti')\
+            .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## window function
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### row_number
+# MAGIC #### rank
+# MAGIC #### dense_rank
+
+# COMMAND ----------
+
+from pyspark.sql.window import Window
+
+# COMMAND ----------
+
+df_csv_1.select(col('Item_Identifier'))\
+            .withColumn('rowNum',row_number().over(Window.orderBy(col('Item_Identifier').desc())))\
+            .withColumn('rank',rank().over(Window.orderBy(col('Item_Identifier').desc())))\
+            .withColumn('dense_rank',dense_rank().over(Window.orderBy(col('Item_Identifier').desc())))\
+                  .display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### cumulative sum
+
+# COMMAND ----------
+
+df_csv_1.select('Item_Type','Item_MRP')\
+    .withColumn('cum_sum',sum('Item_MRP')\
+        .over(Window.partitionBy('Item_Type').orderBy('Item_MRP')))\
+    .withColumn('cum_sum_range_preceding',sum('Item_MRP')\
+        .over(Window.partitionBy('Item_Type').orderBy('Item_MRP')\
+            .rowsBetween(Window.unboundedPreceding,Window.currentRow)))\
+    .withColumn('cum_sum_range_following',sum('Item_MRP')\
+        .over(Window.orderBy('Item_MRP').partitionBy('Item_Type').rowsBetween(Window.unboundedPreceding,Window.unboundedFollowing)))\
+    .display()
 
 # COMMAND ----------
 
